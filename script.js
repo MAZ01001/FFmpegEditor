@@ -6,6 +6,9 @@
     -hwaccel cuda -hwaccel_output_format cuda -i v1.mp4
     -hwaccel cuda -hwaccel_output_format cuda -i v2.mp4
     -i th.png
+    -i sub_eng.srt
+    -i sub_ger.srt
+    -i ffmetadata_chapters.txt
     -filter_complex "
         [0:v] trim= 0:20, setpts=PTS-STARTPTS[i0v0];
         [0:a]atrim= 0:20,asetpts=PTS-STARTPTS[i0a0];
@@ -28,8 +31,40 @@
         -rc-lookahead:v:0 32 -qp 4
     -map 2 -c:v:1 png -disposition:v:1 attached_pic
     -map "[ca]" -c:a aac
-    -metadata comment="VIDEO DESCRIPTION"
+    -map 3 -c:s mov_text -metadata:s:0 language=eng
+    -map 4 -c:s mov_text -metadata:s:1 language=ger
+    -map_chapters 5
     -metadata title="VIDEO TITLE"
-    -metadata artist="MAZ01001"
+    -metadata comment="VIDEO DESCRIPTION"
+    -metadata artist=MAZ01001
     out.mp4
+
+    FAV generate srt subtitle file (sub_LNG.srt ~ "data:,URI-encoded%20text%0Ahere")
+    1
+    00:00:00,000 --> 00:00:03,000
+    hello there
+
+    3
+    00:00:3,000 --> 00:01:00,000
+    multi
+    line
+    subtitles
+
+    FAV generate metadata file with chapters (ffmetadata_chapters.txt ~ download "data:,URI-encoded%20text%0Ahere")
+    ;FFMETADATA1
+    # escape = ; # \ and newline with \
+    title=VIDEO TITLE
+    comment=VIDEO\
+    DESCRIPTION
+    artist=MAZ01001
+
+    [CHAPTER]
+    # set base to milliseconds
+    TIMEBASE=1/1000
+    START=0
+    END=1000
+    title=chapter \#1
+    # ...
+
+    FAV also note https://ffmpeg.org/ffmpeg-all.html#Quoting-and-escaping
 */
